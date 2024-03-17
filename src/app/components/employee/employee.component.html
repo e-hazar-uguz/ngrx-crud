@@ -1,0 +1,172 @@
+<div class="m-sm-3">
+    <div class="card">
+        <div class="card-body pt-2">
+            <div class="container-flex mt-2">
+
+                <div class="d-flex justify-content-between flex-column flex-sm-row">
+                    <h1 style="font-size: 22px; line-height:44px; font-weight: inherit; font-weight: bold;"
+                        class="text-center">{{title}}</h1>
+                    <a (click)="clickAddEmployee()" class="btn  bi bi-patch-plus"
+                        style="color:seagreen; font-size: 1.4rem;" type="button" data-toggle="modal"
+                        data-target="#editEmployee"> Add Employee</a>
+                </div>
+
+            </div>
+
+
+
+            <table class="table table-bordered table-hover table-striped mt-5">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Employee Group</th>
+                        <th scope="col">Employee Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        *ngFor="let employee of employeeData | paginate: { itemsPerPage: 5, currentPage: page, totalItems: totalItems }">
+                        <th scope="row">{{employee.id}}</th>
+                        <td>{{employee.name}}</td>
+                        <td>{{employee.email}}</td>
+                        <td>{{employee.phone}}</td>
+                        <td>{{employee.address}}</td>
+                        <td>{{employee.type}}</td>
+                        <td>{{employee.employee_group}}</td>
+                        <td>{{employee.status==true?'Active':'In Active'}}</td>
+                        <td>
+                            <a (click)="updateData(employee.id)" type="button"
+                                class="btn bi bi-pencil-fill text-porty" data-toggle="modal" data-target="#editEmployee"
+                                style="color: dodgerblue;"> </a>
+                            <a class="btn  bi bi-trash-fill " style="color: red;" mwlConfirmationPopover
+                                [confirmButtonType]="confirmButtonType" [cancelButtonType]="cancelButtonType"
+                                (confirm)="deleteData(employee.id)"> </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Previous"
+                nextLabel="Next"></pagination-controls>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editEmployee" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog  modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">{{ isNew ? 'Create New Employee' : 'Update Employee' }}</h5>
+                <button type="button" (click)="cancel ()" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form [formGroup]="formValue">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6" *ngIf="!isNew">
+                                <label for="id"> <strong>ID</strong></label>
+                                <input type="text" formControlName="id" class="form-control" id="id"
+                                    aria-describedby="emailHelp" [readOnly]="!isNew">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name"><strong>Name</strong></label>
+                                <input type="text" formControlName="name" class="form-control" id="name"
+                                    aria-describedby="emailHelp">
+                                <small *ngIf="name && name.invalid && isNew " class="text-danger">Name is
+                                    Required</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="email"> <strong>Email</strong></label>
+                                <input type="text" formControlName="email" class="form-control" id="email"
+                                    aria-describedby="emailHelp">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone"><strong>Phone</strong></label>
+                                <input type="text" formControlName="phone" class="form-control" id="phone"
+                                    aria-describedby="emailHelp">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="address"><strong>Address</strong></label>
+                                <textarea class="form-control" formControlName="address" id="address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="employee_group"><strong>Employee Group</strong></label>
+                                <ng-select formControlName="employee_group">
+                                    <ng-option *ngFor="let employee of employeeGroups"
+                                        [value]="employee">{{employee}}</ng-option>
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" formControlName="type"
+                                        id="customerRadio" value="CUSTOMER">
+                                    <label class="form-check-label" for="customerRadio">CUSTOMER</label>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" formControlName="type"
+                                        id="supplierRadio" value="SUPPLIER">
+                                    <label class="form-check-label" for="supplierRadio">SUPPLIER</label>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" formControlName="status"
+                                        id="isActiveCheckbox">
+                                    <label class="form-check-label" for="isActiveCheckbox">Is Active</label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button (click)="cancel()" type="button" id="cancel" class="btn btn-danger"
+                    data-dismiss="modal">Close</button>
+                <div>
+                    <button type="button" (click)="saveChangeDatas()" class="btn btn-success"
+                        [disabled]="!formValue.valid">{{isNew ? 'Save' : 'Save Changes' }}</button>
+                    <!-- <button *ngIf="!isNew" type="button" (click)="saveChangeDatas(2)" class="btn btn-outline-success"></button> -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
